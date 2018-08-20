@@ -4,3 +4,6 @@
 [submodule "thirdparty/moderngpu"]
 	path = thirdparty/moderngpu
 	url = https://github.com/moderngpu/moderngpu.git
+[submodule "thirdparty/libgdf-arrow"]
+	path = thirdparty/libgdf-arrow
+	url = https://github.com/Quansight/libgdf-arrow
