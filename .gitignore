@@ -7,6 +7,7 @@ __pycache__
 .vscode
 build
 /thirdparty/googletest/
+/thirdparty/libgdf-arrow/
 /include/gdf/ipc/File_generated.h
 /include/gdf/ipc/Message_generated.h
 /include/gdf/ipc/Schema_generated.h

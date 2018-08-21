@@ -9,7 +9,7 @@
 
 #include <gdf/gdf.h>
 #include <gdf/utils.h>
-#include <gdf/errorutils.h>
+#include <gdf-arrow/errorutils.h>
 
 #include <thrust/copy.h>
 #include <thrust/device_vector.h>
