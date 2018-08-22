@@ -1,0 +1,18 @@
+set(LIBGDF_ARROW_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/libgdf-arrow)
+set(LIBGDF_ARROW_BUILD_DIR ${LIBGDF_ARROW_DIR}/build)
+file(MAKE_DIRECTORY ${LIBGDF_ARROW_BUILD_DIR})
+
+execute_process(
+     COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" -D CUDA_NVCC_FLAGS="${CUDA_NVCC_FLAGS}" ..
+     RESULT_VARIABLE result
+     WORKING_DIRECTORY ${LIBGDF_ARROW_BUILD_DIR}
+)
+
+execute_process(
+     COMMAND ${CMAKE_COMMAND} --build .
+     RESULT_VARIABLE result
+     WORKING_DIRECTORY ${LIBGDF_ARROW_BUILD_DIR}
+)
+
+include_directories(${LIBGDF_ARROW_DIR}/include/)
+link_directories(${LIBGDF_ARROW_BUILD_DIR})

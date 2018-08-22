@@ -43,6 +43,7 @@ include(CTest)
 # Include custom modules (see cmake directory)
 include(ConfigureGoogleTest)
 include(ConfigureArrow)
+include(ConfigureLibgdfArrow)
 
 find_package(CUDA)
 set_package_properties(
