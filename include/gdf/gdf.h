@@ -3,11 +3,17 @@
 
 #include <cstdlib>
 #include <cstdint>
+
+#include "gdf-arrow/cffi/types.h"
+
+
 #include "cffi/types.h"
 
-#define GDF_VALID_BITSIZE (sizeof(gdf_valid_type) * 8)
 
-extern "C" {
+#define GDF_VALID_BITSIZE  (sizeof(gdf_valid_type) * 8)
+
+extern "C"{
+#include "gdf-arrow/cffi/functions.h"  
 #include "cffi/functions.h"
 }
 

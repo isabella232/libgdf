@@ -447,48 +447,5 @@ IpcParser* cffi_unwrap(gdf_ipc_parser_type* hdl){
     return reinterpret_cast<IpcParser*>(hdl);
 }
 
-gdf_ipc_parser_type* gdf_ipc_parser_open(const uint8_t *schema, size_t length) {
-    IpcParser *parser = new IpcParser;
-    
-
-    parser->open(schema, length);
-
-    return cffi_wrap(parser);
-}
-
-void gdf_ipc_parser_close(gdf_ipc_parser_type *handle) {
-    delete cffi_unwrap(handle);
-}
-
-int gdf_ipc_parser_failed(gdf_ipc_parser_type *handle) {
-    return cffi_unwrap(handle)->is_failed();
-}
 
 
-const char *gdf_ipc_parser_get_schema_json(gdf_ipc_parser_type *handle) {
-    return cffi_unwrap(handle)->get_schema_json().c_str();
-}
-
-
-const char* gdf_ipc_parser_get_layout_json(gdf_ipc_parser_type *handle) {
-    return cffi_unwrap(handle)->get_layout_json().c_str();
-}
-
-const char* gdf_ipc_parser_get_error(gdf_ipc_parser_type *handle) {
-    return cffi_unwrap(handle)->get_error().c_str();
-}
-
-const void* gdf_ipc_parser_get_data(gdf_ipc_parser_type *handle) {
-    return cffi_unwrap(handle)->get_data();
-}
-
-int64_t gdf_ipc_parser_get_data_offset(gdf_ipc_parser_type *handle) {
-    return cffi_unwrap(handle)->get_data_offset();
-}
-
-void gdf_ipc_parser_open_recordbatches(gdf_ipc_parser_type *handle,
-                                       const uint8_t *recordbatches,
-                                       size_t length)
-{
-    return cffi_unwrap(handle)->open_recordbatches(recordbatches, length);
-}
