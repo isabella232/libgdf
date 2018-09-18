@@ -111,7 +111,6 @@ endif()
 cuda_add_library(gdf SHARED
     src/binaryops.cu
     src/bitmaskops.cu
-    src/column.cpp
     src/context.cpp
     src/cudautils.cu
     src/datetimeops.cu
@@ -133,16 +132,18 @@ cuda_add_library(gdf SHARED
 
 if (ARROW_NUMERIC_VERSION EQUAL 900)
   # arrow-0.9 requires boost_regex
-  target_link_libraries(gdf arrow boost_regex)
+  target_link_libraries(gdf gdf-arrow arrow boost_regex)
 else()
-  target_link_libraries(gdf arrow)
+  target_link_libraries(gdf gdf-arrow arrow)
 endif()
 
 # Command to symlink files into the build directory
 add_custom_command(  # link the include directory
     OUTPUT include
     COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/include include
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/libgdf-arrow/include include-gdf-arrow
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/libgdf-arrow/include)  
 
 add_custom_command(  # link the python directory
     OUTPUT libgdf_cffi setup.py tests
