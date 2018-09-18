@@ -75,43 +75,65 @@ gdf_error gdf_segmented_radixsort_generic(gdf_segmented_radixsort_plan_type *hdl
                                      unsigned *d_begin_offsets,
                                      unsigned *d_end_offsets);
 
-/* joining
+// joins
 
-These functions return the result in *out_result*.
-Use the *gdf_join_result_* functions to extract data and deallocate.
-The result is a sequence of indices for the left (L) and then the right (R)
-keys in the form of
-
-    L0, L1, L2, ..., Ln-1, R0, R1, R2, ..., Rn-1
-
-where n/2 is the size returned from *gdf_join_result_size()*, which
-gives the number of int pairs in the output array.
-*/
 
 gdf_error gdf_inner_join(int num_cols, gdf_column **leftcol, gdf_column **rightcol,
-                                 gdf_join_result_type **out_result, gdf_context *ctxt);
+                         gdf_column *left_result, gdf_column *right_result,
+                         gdf_context *join_context);
 
 gdf_error gdf_left_join(int num_cols, gdf_column **leftcol, gdf_column **rightcol,
-                                gdf_join_result_type **out_result, gdf_context *ctxt);
+                        gdf_column *left_result, gdf_column *right_result,
+                        gdf_context *join_context);
 
 gdf_error gdf_outer_join_i8(gdf_column *leftcol, gdf_column *rightcol,
-                             gdf_join_result_type **out_result);
+                            gdf_column *l_result, gdf_column *r_result);
 gdf_error gdf_outer_join_i16(gdf_column *leftcol, gdf_column *rightcol,
-                             gdf_join_result_type **out_result);
+                            gdf_column *l_result, gdf_column *r_result);
 gdf_error gdf_outer_join_i32(gdf_column *leftcol, gdf_column *rightcol,
-                             gdf_join_result_type **out_result);
+                            gdf_column *l_result, gdf_column *r_result);
 gdf_error gdf_outer_join_i64(gdf_column *leftcol, gdf_column *rightcol,
-                             gdf_join_result_type **out_result);
+                            gdf_column *l_result, gdf_column *r_result);
 gdf_error gdf_outer_join_f32(gdf_column *leftcol, gdf_column *rightcol,
-                             gdf_join_result_type **out_result);
+                            gdf_column *l_result, gdf_column *r_result);
 gdf_error gdf_outer_join_f64(gdf_column *leftcol, gdf_column *rightcol,
-                             gdf_join_result_type **out_result);
+                            gdf_column *l_result, gdf_column *r_result);
 gdf_error gdf_outer_join_generic(gdf_column *leftcol, gdf_column *rightcol,
-                                 gdf_join_result_type **out_result);
+                                 gdf_column *l_result, gdf_column *r_result);
 
-gdf_error gdf_join_result_free(gdf_join_result_type *result);
-void* gdf_join_result_data(gdf_join_result_type *result);
-size_t gdf_join_result_size(gdf_join_result_type *result);
+
+/* partioning */
+
+/* --------------------------------------------------------------------------*/
+/** 
+ * @brief Computes the hash values of the rows in the specified columns of the 
+ * input columns and bins the hash values into the desired number of partitions. 
+ * Rearranges the input columns such that rows with hash values in the same bin 
+ * are contiguous.
+ * 
+ * @Param[in] num_input_cols The number of columns in the input columns
+ * @Param[in] input[] The input set of columns
+ * @Param[in] columns_to_hash[] Indices of the columns in the input set to hash
+ * @Param[in] num_cols_to_hash The number of columns to hash
+ * @Param[in] num_partitions The number of partitions to rearrange the input rows into
+ * @Param[out] partitioned_output Preallocated gdf_columns to hold the rearrangement 
+ * of the input columns into the desired number of partitions
+ * @Param[out] partition_offsets Preallocated array the size of the number of
+ * partitions. Where partition_offsets[i] indicates the starting position
+ * of partition 'i'
+ * @Param[in] hash The hash function to use
+ * 
+ * @Returns  If the operation was successful, returns GDF_SUCCESS
+ */
+/* ----------------------------------------------------------------------------*/
+gdf_error gdf_hash_partition(int num_input_cols, 
+                             gdf_column * input[], 
+                             int columns_to_hash[],
+                             int num_cols_to_hash,
+                             int num_partitions, 
+                             gdf_column * partitioned_output[],
+                             int partition_offsets[],
+                             gdf_hash_func hash);
 
 /* prefixsum */
 
@@ -125,10 +147,19 @@ gdf_error gdf_prefixsum_i64(gdf_column *inp, gdf_column *out, int inclusive);
 
 /* hashing */
 
-// num_cols: the number of columns
-// input: a list of the column pointers
-// hash: the hashing function to use
-// output: the output column, allocated by the caller, must have GDF_INT32 dtype
+/* --------------------------------------------------------------------------*/
+/** 
+ * @Synopsis  Computes the hash value of each row in the input set of columns.
+ * 
+ * @Param num_cols The number of columns in the input set
+ * @Param input The list of columns whose rows will be hashed
+ * @Param hash The hash function to use
+ * @Param output The hash value of each row of the input
+ * 
+ * @Returns   GDF_SUCCESS if the operation was successful, otherwise an appropriate
+ * error code
+ */
+/* ----------------------------------------------------------------------------*/
 gdf_error gdf_hash(int num_cols, gdf_column **input, gdf_hash_func hash, gdf_column *output);
 
 /* trig */
@@ -524,4 +555,16 @@ gdf_error gdf_group_by_count(int ncols,                    // # columns
                              gdf_context* ctxt);            //struct with additional info: bool is_sorted, flag_sort_or_hash, bool flag_count_distinct
 
 
-// gdf_error get_column_byte_width(gdf_column * col, int * width);
+gdf_error gdf_quantile_exact(	gdf_column*         col_in,       //input column;
+                                gdf_quantile_method prec,         //precision: type of quantile method calculation
+                                double              q,            //requested quantile in [0,1]
+                                void*               t_erased_res, //result; for <exact> should probably be double*; it's void* because
+                                                                  //(1) for uniformity of interface with <approx>;
+                                                                  //(2) for possible types bigger than double, in the future;
+                                gdf_context*        ctxt);        //context info
+
+gdf_error gdf_quantile_aprrox(	gdf_column*  col_in,       //input column;
+                                double       q,            //requested quantile in [0,1]
+                                void*        t_erased_res, //type-erased result of same type as column;
+                                gdf_context* ctxt);        //context info
+
