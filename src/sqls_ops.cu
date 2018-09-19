@@ -4,7 +4,7 @@
 
 #include <gdf/gdf.h>
 #include <gdf/utils.h>
-#include <gdf/errorutils.h>
+#include "gdf-arrow/errorutils.h"
 
 ///#include "../include/sqls_rtti_comp.hpp" -- CORRECT: put me back
 #include "sqls_rtti_comp.hpp"

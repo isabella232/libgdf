@@ -16,7 +16,7 @@
 
 #include <cuda_runtime.h>
 #include <future>
-#include <gdf/errorutils.h>
+#include "gdf-arrow/errorutils.h"
 
 #include "join_kernels.cuh"
 #include "../../gdf_table.cuh"

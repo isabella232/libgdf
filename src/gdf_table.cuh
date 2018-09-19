@@ -21,7 +21,7 @@
 #include <gdf/utils.h>
 #include <thrust/device_vector.h>
 #include <cassert>
-#include <gdf/errorutils.h>
+#include "gdf-arrow/errorutils.h"
 #include "hashmap/hash_functions.cuh"
 #include "hashmap/managed.cuh"
 #include "sqls_rtti_comp.hpp"

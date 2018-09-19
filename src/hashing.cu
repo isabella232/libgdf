@@ -15,7 +15,7 @@
  */
 
 #include <gdf/gdf.h>
-#include <gdf/errorutils.h>
+#include "gdf-arrow/errorutils.h"
 #include <thrust/tabulate.h>
 #include <thrust/device_vector.h>
 

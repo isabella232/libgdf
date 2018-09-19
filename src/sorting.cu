@@ -1,6 +1,6 @@
 #include <gdf/gdf.h>
 #include <gdf/utils.h>
-#include <gdf/errorutils.h>
+#include "gdf-arrow/errorutils.h"
 
 #include <cub/device/device_radix_sort.cuh>
 

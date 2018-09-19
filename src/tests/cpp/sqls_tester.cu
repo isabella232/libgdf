@@ -28,7 +28,7 @@
 
 #include <gdf/gdf.h>
 #include <gdf/utils.h>
-#include <gdf/errorutils.h>
+#include "gdf-arrow/errorutils.h"
 
 
 #include "sqls_rtti_comp.hpp"

@@ -125,12 +125,10 @@ cuda_add_library(gdf SHARED
     src/binaryops.cu
     src/bitmaskops.cu
     src/context.cpp
-    src/cudautils.cu
     src/datetimeops.cu
     src/errorhandling.cpp
     src/filterops.cu
     src/hashops.cu
-    src/ipc.cu
     src/reductions.cu
     src/join/joining.cu
     src/hashing.cu

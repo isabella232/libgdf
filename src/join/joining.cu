@@ -15,7 +15,7 @@
  */
 
 #include <gdf/gdf.h>
-#include <gdf/errorutils.h>
+#include "gdf-arrow/errorutils.h"
 #include <limits>
 
 #include "joining.h"
