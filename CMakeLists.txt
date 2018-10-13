@@ -121,6 +121,7 @@ endif()
 
 
 cuda_add_library(gdf SHARED
+    src/arrow.cpp
     src/binaryops.cu
     src/bitmaskops.cu
     src/column.cpp
@@ -149,9 +150,9 @@ cuda_add_library(gdf SHARED
 
 if (ARROW_NUMERIC_VERSION EQUAL 900)
   # arrow-0.9 requires boost_regex
-  target_link_libraries(gdf arrow boost_regex)
+  target_link_libraries(gdf arrow arrow_gpu boost_regex)
 else()
-  target_link_libraries(gdf arrow)
+  target_link_libraries(gdf arrow arrow_gpu)
 endif()
 
 # Command to symlink files into the build directory
