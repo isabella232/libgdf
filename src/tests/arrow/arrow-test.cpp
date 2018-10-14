@@ -9,7 +9,7 @@ using namespace arrow;
 using namespace arrow::gpu;
 
 TEST(ArrowTests, GdfToArrow){
-  gdf_column inputCol;
+  gdf_column inputCol, outputCol;
   std::vector<int32_t> inputData = {
     17696,
     17697,
@@ -25,13 +25,17 @@ TEST(ArrowTests, GdfToArrow){
   CudaDeviceManager::GetInstance(&manager_);
   std::shared_ptr<arrow::gpu::CudaContext> context_;
   manager_->GetContext(0, &context_);
-
-  auto buffer = std::make_shared<CudaBuffer>((uint8_t *) inputCol.data,
-                                             inputCol.size,
+  uint8_t * casted_data = (uint8_t *) inputCol.data;
+  auto buffer = std::make_shared<CudaBuffer>(casted_data,
+                                             4 * inputCol.size,
                                              context_,
-                                             true,
+                                             false,
                                              false);
-  PrimitiveArray array(arrow_dtype, int64_t(inputCol.size), buffer);
+  auto array = std::make_shared<PrimitiveArray>(arrow_dtype, int64_t(inputCol.size), buffer);
   
-  arrow_to_gdf(&array, &inputCol);
+  arrow_to_gdf(array.get(), &outputCol);
+  EXPECT_TRUE(outputCol.size == inputCol.size);
+  EXPECT_TRUE(inputCol.data == outputCol.data);
+  EXPECT_TRUE(inputCol.valid == outputCol.valid);
+  EXPECT_TRUE(inputCol.dtype == outputCol.dtype);
 }

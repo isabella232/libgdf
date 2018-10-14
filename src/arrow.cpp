@@ -57,8 +57,11 @@ arrow_type gdf_dtype_to_arrow_dtype(gdf_dtype type){
 void* arrow_to_gdf(arrow::PrimitiveArray *array, gdf_column* result){
   std::shared_ptr<arrow::ArrayData> data = array->data();
   gdf_dtype dtype = arrow_dtype_to_gdf_dtype(data->type->id());
-  result->data = (void *)array->values()->data(); 
-  result->valid = (gdf_valid_type*)array->null_bitmap()->data();
+  result->data = (void *)array->values()->data();
+  const uint8_t * null_bitmap_data = array->null_bitmap_data();
+  if (null_bitmap_data != NULLPTR){
+    result->valid = (gdf_valid_type*) null_bitmap_data;
+  }
   result->size = array->length();
   result->dtype = dtype;
   result-> null_count = array->null_count();
