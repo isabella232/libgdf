@@ -20,6 +20,28 @@ TEST(ArrowTests, GdfToArrow){
   inputCol.null_count = 0;
   thrust::device_vector<int32_t> inputDataDev(inputData);
   inputCol.data = thrust::raw_pointer_cast(inputDataDev.data());
+  std::shared_ptr<arrow::PrimitiveArray> array = gdf_to_arrow(&inputCol);
+  arrow_to_gdf(array.get(), &outputCol);
+  
+  EXPECT_TRUE(outputCol.size == inputCol.size);
+  EXPECT_TRUE(inputCol.data == outputCol.data);
+  EXPECT_TRUE(inputCol.valid == outputCol.valid);
+  EXPECT_TRUE(inputCol.dtype == outputCol.dtype);  
+  
+}
+
+TEST(ArrowTests, ArrowToGDF){
+  gdf_column inputCol, outputCol, outputCol2;
+  std::vector<int32_t> inputData = {
+    17696,
+    17697,
+  };
+  inputCol.dtype = GDF_INT32;
+  inputCol.size = 2;
+  inputCol.valid = NULL;
+  inputCol.null_count = 0;
+  thrust::device_vector<int32_t> inputDataDev(inputData);
+  inputCol.data = thrust::raw_pointer_cast(inputDataDev.data());
   auto arrow_dtype = int32();
   CudaDeviceManager* manager_;
   CudaDeviceManager::GetInstance(&manager_);
