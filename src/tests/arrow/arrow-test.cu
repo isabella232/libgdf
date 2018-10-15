@@ -8,28 +8,6 @@
 using namespace arrow;
 using namespace arrow::gpu;
 
-TEST(ArrowTests, GdfToArrow){
-  gdf_column inputCol, outputCol, outputCol2;
-  std::vector<int32_t> inputData = {
-    17696,
-    17697,
-  };
-  inputCol.dtype = GDF_INT32;
-  inputCol.size = 2;
-  inputCol.valid = NULL;
-  inputCol.null_count = 0;
-  thrust::device_vector<int32_t> inputDataDev(inputData);
-  inputCol.data = thrust::raw_pointer_cast(inputDataDev.data());
-  std::shared_ptr<arrow::PrimitiveArray> array = gdf_to_arrow(&inputCol);
-  arrow_to_gdf(array.get(), &outputCol);
-  
-  EXPECT_TRUE(outputCol.size == inputCol.size);
-  EXPECT_TRUE(inputCol.data == outputCol.data);
-  EXPECT_TRUE(inputCol.valid == outputCol.valid);
-  EXPECT_TRUE(inputCol.dtype == outputCol.dtype);  
-  
-}
-
 TEST(ArrowTests, ArrowToGDF){
   gdf_column inputCol, outputCol, outputCol2;
   std::vector<int32_t> inputData = {
@@ -80,3 +58,35 @@ TEST(ArrowTests, ArrowToGDF){
   EXPECT_TRUE(inputCol.dtype == outputCol2.dtype);  
   
 }
+
+TEST(ArrowTests, GdfToArrow){
+  gdf_column inputCol, outputCol, outputCol2;
+  std::vector<int32_t> inputData = {
+    17696,
+    17697,
+  };
+  inputCol.dtype = GDF_INT32;
+  inputCol.size = 2;
+  inputCol.valid = NULL;
+  inputCol.null_count = 0;
+  thrust::device_vector<int32_t> inputDataDev(inputData);
+  inputCol.data = thrust::raw_pointer_cast(inputDataDev.data());
+  std::shared_ptr<arrow::PrimitiveArray> array = gdf_to_arrow(&inputCol);
+  arrow_to_gdf(array.get(), &outputCol);
+  
+  EXPECT_TRUE(outputCol.size == inputCol.size);
+  EXPECT_TRUE(inputCol.data == outputCol.data);
+  EXPECT_TRUE(inputCol.valid == outputCol.valid);
+  EXPECT_TRUE(inputCol.dtype == outputCol.dtype);  
+
+  thrust::device_vector<gdf_valid_type> inputValidDev(1,255);
+  inputCol.valid = thrust::raw_pointer_cast(inputValidDev.data());
+
+  std::shared_ptr<arrow::PrimitiveArray> array2 = gdf_to_arrow(&inputCol);
+  arrow_to_gdf(array2.get(), &outputCol2);
+  EXPECT_TRUE(outputCol2.size == inputCol.size);
+  EXPECT_TRUE(inputCol.data == outputCol2.data);
+  EXPECT_TRUE(inputCol.valid == outputCol2.valid);
+  EXPECT_TRUE(inputCol.dtype == outputCol2.dtype);  
+}
+
