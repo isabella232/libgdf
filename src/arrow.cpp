@@ -61,10 +61,12 @@ void* arrow_to_gdf(arrow::PrimitiveArray *array, gdf_column* result){
   const uint8_t * null_bitmap_data = array->null_bitmap_data();
   if (null_bitmap_data != NULLPTR){
     result->valid = (gdf_valid_type*) null_bitmap_data;
+  }else{
+    result->valid = NULL;
   }
   result->size = array->length();
   result->dtype = dtype;
-  result-> null_count = array->null_count();
+  result->null_count = array->null_count();
 }
 
 // arrow::Array arrow_to_gdf(gdf_column *column){

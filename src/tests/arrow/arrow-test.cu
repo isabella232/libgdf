@@ -9,7 +9,7 @@ using namespace arrow;
 using namespace arrow::gpu;
 
 TEST(ArrowTests, GdfToArrow){
-  gdf_column inputCol, outputCol;
+  gdf_column inputCol, outputCol, outputCol2;
   std::vector<int32_t> inputData = {
     17696,
     17697,
@@ -34,8 +34,27 @@ TEST(ArrowTests, GdfToArrow){
   auto array = std::make_shared<PrimitiveArray>(arrow_dtype, int64_t(inputCol.size), buffer);
   
   arrow_to_gdf(array.get(), &outputCol);
+  
   EXPECT_TRUE(outputCol.size == inputCol.size);
   EXPECT_TRUE(inputCol.data == outputCol.data);
   EXPECT_TRUE(inputCol.valid == outputCol.valid);
-  EXPECT_TRUE(inputCol.dtype == outputCol.dtype);
+  EXPECT_TRUE(inputCol.dtype == outputCol.dtype);  
+
+  thrust::device_vector<gdf_valid_type> inputValidDev(1,255);
+  inputCol.valid = thrust::raw_pointer_cast(inputValidDev.data());
+  auto null_bitmap = std::make_shared<CudaBuffer>((uint8_t *)inputCol.valid,
+                                                  inputCol.size,
+                                                  context_,
+                                                  false,
+                                                  false);
+  auto array2 = std::make_shared<PrimitiveArray>(arrow_dtype,
+                                                 int64_t(inputCol.size),
+                                                 buffer,
+                                                 null_bitmap);
+  arrow_to_gdf(array2.get(), &outputCol2);
+  EXPECT_TRUE(outputCol2.size == inputCol.size);
+  EXPECT_TRUE(inputCol.data == outputCol2.data);
+  EXPECT_TRUE(inputCol.valid == outputCol2.valid);
+  EXPECT_TRUE(inputCol.dtype == outputCol2.dtype);  
+  
 }
