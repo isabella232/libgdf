@@ -29,6 +29,9 @@ gdf_dtype arrow_dtype_to_gdf_dtype(std::shared_ptr<DataType> type){
     case arrow_type::DOUBLE:
       result =  gdf_dtype::GDF_FLOAT64;
       break;
+    default:
+      //throw if we don't switch?
+      std::cout << "BAD\n";
     }
   return result;
 }
@@ -76,6 +79,15 @@ std::shared_ptr<DataType> gdf_dtype_to_arrow_dtype(gdf_dtype type){
     case gdf_dtype::GDF_INT64:
       result = int64();
       break;
+    case gdf_dtype::GDF_FLOAT32:
+      result = float32();
+      break;
+    case gdf_dtype::GDF_FLOAT64:
+      result = float64();
+      break;            
+    default:
+      //throw if we don't switch?
+      std::cout << "BAD\n";
     }
   return result;
 }
@@ -108,8 +120,11 @@ std::shared_ptr<arrow::PrimitiveArray> gdf_to_arrow(gdf_column* column){
   CudaDeviceManager::GetInstance(&manager_);
   std::shared_ptr<CudaContext> context_;
   manager_->GetContext(0, &context_);
+  
   std::shared_ptr<DataType> arrow_dtype = gdf_dtype_to_arrow_dtype(column->dtype);
   int32_t width = byte_width(arrow_dtype);
+  
+  
   std::shared_ptr<CudaBuffer>  buffer = std::make_shared<CudaBuffer>((uint8_t*)column->data,
                                                                      column->size * width,
                                                                      context_,
