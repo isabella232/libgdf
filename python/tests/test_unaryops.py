@@ -73,10 +73,13 @@ def cast_op_test(dtype, to_dtype, test_fn, nelem=128):
 
 def test_col_mismatch_error():
     nelem = 128
+    extra = 10
     h_data = np.random.random(nelem).astype(np.float32)
     d_data = cuda.to_device(h_data)
-    d_result = cuda.device_array_like(d_data)
-
+    d_result = cuda.device_array_like(
+        np.random.random(nelem + extra).astype(np.float32)
+    )
+    
     col_data = new_column()
     col_result = new_column()
 
